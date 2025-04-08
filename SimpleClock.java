@@ -23,20 +23,21 @@ public class SimpleClock extends JFrame {
         SimpleClock() {
             this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             this.setTitle("Digital Clock");
-            this.setLayout(new FlowLayout());
-            this.setSize(350, 220);
+            this.setLayout(new FlowLayout(FlowLayout.CENTER, 10,10));
+            this.setSize(400, 250);
             this.setResizable(false);
     
             timeFormat = new SimpleDateFormat("hh:mm:ss a");
             dayFormat=new SimpleDateFormat("EEEE");
             dateFormat=new SimpleDateFormat("dd MMMMM, yyyy");
             timeLabel = new JLabel();
-            timeLabel.setFont(new Font("SANS_SERIF", Font.PLAIN, 59));
-            timeLabel.setBackground(Color.BLACK);
-            timeLabel.setForeground(Color.WHITE);
+            timeLabel.setFont(new Font("SANS_SERIF", Font.PLAIN, 65));
+            timeLabel.setBackground(Color.CYAN);
+            timeLabel.setForeground(Color.BLACK);
             timeLabel.setOpaque(true);
             dayLabel=new JLabel();
-            dayLabel.setFont(new Font("Ink Free",Font.BOLD,34));
+            dayLabel.setFont(new Font("Ink Free",Font.BOLD,40));
+            dayLabel.setLayout(new FlowLayout(FlowLayout.CENTER));
     
             dateLabel=new JLabel();
             dateLabel.setFont(new Font("Ink Free",Font.BOLD,30));
@@ -51,22 +52,26 @@ public class SimpleClock extends JFrame {
         }
     
         public void setTimer() {
-            while (true) {
-                time = timeFormat.format(Calendar.getInstance().getTime());
-                timeLabel.setText(time);
-    
-                day = dayFormat.format(Calendar.getInstance().getTime());
-                dayLabel.setText(day);
-    
-                date = dateFormat.format(Calendar.getInstance().getTime());
-                dateLabel.setText(date);
-    
-                try {
-                    Thread.sleep(1000);
-                } catch (Exception e) {
-                    e.getStackTrace();
+            Runnable task = () -> {
+                while (true) {
+                    time = timeFormat.format(Calendar.getInstance().getTime());
+                    timeLabel.setText(time);
+
+                    day = dayFormat.format(Calendar.getInstance().getTime());
+                    dayLabel.setText(day);
+
+                    date = dateFormat.format(Calendar.getInstance().getTime());
+                    dateLabel.setText(date);
+
+                    try {
+                        Thread.sleep(1000);
+                    } catch (Exception e) {
+                        e.getStackTrace();
+                    }
                 }
-            }
+            };
+            Thread thread = new Thread(task);
+            thread.start();
         }
         public static void main(String[] args) {
             new SimpleClock();
