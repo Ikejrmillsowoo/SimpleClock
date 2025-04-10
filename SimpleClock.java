@@ -2,17 +2,10 @@
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.SimpleDateFormat;
-import java.time.Instant;
 import java.time.ZoneId;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.util.Set;
 import java.util.TimeZone;
 
 
@@ -20,8 +13,9 @@ public class SimpleClock extends JFrame {
 
     Calendar calendar;
     SimpleDateFormat timeFormat;
-    SimpleDateFormat timeFormat24;
-    SimpleDateFormat timeFormatGMT;
+    private final SimpleDateFormat TIME_FORMAT_24 = new SimpleDateFormat("HH:mm:ss"); // 24-hour format;
+    private final SimpleDateFormat TIME_FORMAT_GMT = new SimpleDateFormat("hh:mm:ss a"); // 24-hour format;
+    private final SimpleDateFormat TIME_FORMAT_12 = new SimpleDateFormat("hh:mm:ss a"); // 24-hour format;
     SimpleDateFormat dayFormat;
     SimpleDateFormat dateFormat;
 
@@ -45,8 +39,6 @@ public class SimpleClock extends JFrame {
 
 
         timeFormat = new SimpleDateFormat("hh:mm:ss a");
-        timeFormat24 = new SimpleDateFormat("HH:mm:ss"); // 24-hour format
-        timeFormatGMT = new SimpleDateFormat("hh:mm:ss a"); // 24-hour format
         dayFormat = new SimpleDateFormat("EEEE");
         dateFormat = new SimpleDateFormat("dd MMMMM, yyyy");
         timeLabel = new JLabel();
@@ -107,26 +99,29 @@ public class SimpleClock extends JFrame {
         };
         Thread thread = new Thread(task);
         thread.start();
-        System.out.println(thread.getPriority());
     }
 
     public ActionListener setMilitaryTimeButton() {
         return e -> {
-            time = timeFormat24.format(GregorianCalendar.getInstance().getTime());
-            timeLabel.setText(time);
-
-//            SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss"); // 24-hour format
-//            time = timeFormat24.format(GregorianCalendar.getInstance().getTime());
-//            timeLabel.setText(time);
+//            timeFormat = timeFormat.equals(TIME_FORMAT_24)  ? TIME_FORMAT_12 : TIME_FORMAT_24;
+            if (timeFormat.equals(TIME_FORMAT_24)) {
+                timeFormat = TIME_FORMAT_12;
+            } else if (timeFormat.equals(TIME_FORMAT_12)) {
+                timeFormat = TIME_FORMAT_24;
+            }
         };
     }
 
     public ActionListener setGMTTimeButton() {
         return e -> {
             ZoneId id = ZoneId.of("GMT");
-            timeFormatGMT.setTimeZone(TimeZone.getTimeZone(id));
-            time = timeFormatGMT.format(new GregorianCalendar().getTime());
-            timeLabel.setText(time);
+            TIME_FORMAT_GMT.setTimeZone(TimeZone.getTimeZone(id));
+            if (timeFormat.equals(TIME_FORMAT_GMT)) {
+                timeFormat = TIME_FORMAT_12;
+            } else if (timeFormat.equals(TIME_FORMAT_12)) {
+                timeFormat = TIME_FORMAT_GMT;
+            }
+
         };
     }
 
